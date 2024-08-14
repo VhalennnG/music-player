@@ -20,7 +20,7 @@ class NowPlayingBar extends StatelessWidget {
             child: GestureDetector(
               onTap: () {
                 // Navigate to the SongPage when the bar is tapped
-                Navigator.pushReplacement(
+                Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const SongPage()),
                 );

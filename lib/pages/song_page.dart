@@ -66,23 +66,23 @@ class SongPage extends StatelessWidget {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: QueryArtworkWidget(
-                          id: currentSong.id,
-                          type: ArtworkType.AUDIO,
-                          nullArtworkWidget: Container(
-                            height: 200,
-                            width: 200,
-                            child: Icon(
-                              Icons.music_note_sharp,
-                              size: 100,
-                              color:
-                                  Theme.of(context).colorScheme.inversePrimary,
+                            id: currentSong.id,
+                            type: ArtworkType.AUDIO,
+                            nullArtworkWidget: Container(
+                              height: 200,
+                              width: 200,
+                              child: Icon(
+                                Icons.music_note_sharp,
+                                size: 100,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary,
+                              ),
                             ),
-                          ),
-                          artworkWidth: 200,
-                          artworkHeight: 200,
-                          artworkFit: BoxFit.cover,
-                          keepOldArtwork: false,
-                        ),
+                            artworkWidth: 200,
+                            artworkHeight: 200,
+                            artworkFit: BoxFit.cover,
+                            keepOldArtwork: false),
                       ),
 
                       // Song and artist name

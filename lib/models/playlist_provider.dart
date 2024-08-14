@@ -7,21 +7,23 @@ import 'package:permission_handler/permission_handler.dart';
 class PlaylistProvider extends ChangeNotifier {
   // Query object to get songs from device
   final OnAudioQuery _audioQuery = OnAudioQuery();
-  List<SongModel> _playlist = [];
   final AudioPlayer _audioPlayer = AudioPlayer();
 
+  List<SongModel> _playlist = [];
+
   PlaylistProvider() {
-    requestStoragePermission();
+    requestPermissions();
     listenToDuration();
   }
 
-  requestStoragePermission() async {
-    PermissionStatus result;
-    result = await Permission.audio.request();
+  requestPermissions() async {
+    PermissionStatus audioPermission = await Permission.audio.request();
+    PermissionStatus photosPermission = await Permission.photos.request();
 
-    if (result.isGranted) {
+    if (audioPermission.isGranted && photosPermission.isGranted) {
       fetchSong();
-    } else if (result.isPermanentlyDenied) {
+    } else if (audioPermission.isPermanentlyDenied ||
+        photosPermission.isPermanentlyDenied) {
       await openAppSettings();
     }
   }
@@ -106,7 +108,6 @@ class PlaylistProvider extends ChangeNotifier {
   // toggle repeat
   void toggleRepeat() {
     _isRepeat = !_isRepeat;
-    notifyListeners();
   }
 
   // toggle random song
@@ -124,7 +125,6 @@ class PlaylistProvider extends ChangeNotifier {
     // listen full duration
     _audioPlayer.onDurationChanged.listen((newDuration) {
       _totalDuration = newDuration;
-      notifyListeners();
     });
 
     // listen current duration
@@ -135,8 +135,8 @@ class PlaylistProvider extends ChangeNotifier {
           (_totalDuration.inSeconds - _currentDuration.inSeconds <= 1)) {
         seek(Duration.zero);
         play();
+        notifyListeners();
       }
-      notifyListeners();
     });
 
     // listen next song

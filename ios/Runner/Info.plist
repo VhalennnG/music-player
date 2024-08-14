@@ -50,10 +50,6 @@
 	<string>App needs access to your photo library to display album artworks.</string>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>App needs access to your music library to play music.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>App needs access to your microphone to record audio.</string>
-	<key>NSLibraryUsageDescription</key>
-	<string>App needs access to your media library to play songs.</string>
 
 </dict>
 </plist>
