@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/widgets.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -18,12 +19,10 @@ class PlaylistProvider extends ChangeNotifier {
 
   requestPermissions() async {
     PermissionStatus audioPermission = await Permission.audio.request();
-    PermissionStatus photosPermission = await Permission.photos.request();
 
-    if (audioPermission.isGranted && photosPermission.isGranted) {
+    if (audioPermission.isGranted) {
       fetchSong();
-    } else if (audioPermission.isPermanentlyDenied ||
-        photosPermission.isPermanentlyDenied) {
+    } else if (audioPermission.isPermanentlyDenied) {
       await openAppSettings();
     }
   }
@@ -45,39 +44,35 @@ class PlaylistProvider extends ChangeNotifier {
   Duration _totalDuration = Duration.zero;
 
   // initial not playing
-  bool _isPlaying = false;
-  bool _isRepeat = false;
+  ValueNotifier<bool> _isPlaying = ValueNotifier(false);
+  ValueNotifier<bool> _isRepeat = ValueNotifier(false);
 
   // play the song
   void play() async {
     final String path = _playlist[_currentSongIndex!].data;
     await _audioPlayer.stop();
     await _audioPlayer.play(DeviceFileSource(path));
-    _isPlaying = true;
-    notifyListeners();
+    _isPlaying.value = true;
   }
 
   // pause current song
   void pause() async {
     await _audioPlayer.pause();
-    _isPlaying = false;
-    notifyListeners();
+    _isPlaying.value = false;
   }
 
   // resume current song
   void resume() async {
     await _audioPlayer.resume();
-    _isPlaying = true;
-    notifyListeners();
+    _isPlaying.value = true;
   }
 
   // pause or resume
   void pausePlay() {
-    if (_isPlaying)
+    if (_isPlaying.value)
       pause();
     else
       resume();
-    notifyListeners();
   }
 
   // seek specific position
@@ -109,8 +104,7 @@ class PlaylistProvider extends ChangeNotifier {
 
   // toggle repeat
   void toggleRepeat() {
-    _isRepeat = !_isRepeat;
-    notifyListeners();
+    _isRepeat.value = !_isRepeat.value;
   }
 
   // toggle random song
@@ -134,7 +128,7 @@ class PlaylistProvider extends ChangeNotifier {
     _audioPlayer.onPositionChanged.listen((newPosition) {
       currentDurationNotifier.value = newPosition;
       // Check if the current duration is 1 second away from the total duration
-      if (_isRepeat &&
+      if (_isRepeat.value &&
           (_totalDuration.inSeconds - newPosition.inSeconds <= 1)) {
         seek(Duration.zero);
         play();
@@ -144,7 +138,7 @@ class PlaylistProvider extends ChangeNotifier {
 
     // listen next song
     _audioPlayer.onPlayerComplete.listen((event) {
-      if (_isRepeat) {
+      if (_isRepeat.value) {
         seek(Duration.zero);
         play();
       } else {
@@ -156,8 +150,8 @@ class PlaylistProvider extends ChangeNotifier {
   // GETTER
   List<SongModel> get playlist => _playlist;
   int? get currentSongIndex => _currentSongIndex;
-  bool get isPlaying => _isPlaying;
-  bool get isRepeat => _isRepeat;
+  ValueNotifier<bool> get isPlaying => _isPlaying;
+  ValueNotifier<bool> get isRepeat => _isRepeat;
   Duration get totalDuration => _totalDuration;
 
   // SETTER

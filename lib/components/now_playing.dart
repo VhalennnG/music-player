@@ -75,12 +75,16 @@ class NowPlayingBar extends StatelessWidget {
                         ),
 
                         // Pause/Play and Next buttons
-                        IconButton(
-                          icon: Icon(
-                            value.isPlaying ? Icons.pause : Icons.play_arrow,
-                          ),
-                          onPressed: () => value.pausePlay(),
-                        ),
+                        ValueListenableBuilder<bool>(
+                            valueListenable: value.isPlaying,
+                            builder: (context, isplaying, child) {
+                              return IconButton(
+                                icon: Icon(
+                                  isplaying ? Icons.pause : Icons.play_arrow,
+                                ),
+                                onPressed: () => value.pausePlay(),
+                              );
+                            }),
                         IconButton(
                           icon: Icon(Icons.skip_next),
                           onPressed: () => value.playNextSong(),

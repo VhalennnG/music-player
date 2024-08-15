@@ -105,7 +105,10 @@ class SongPage extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                Text(currentSong.artist ?? 'unknown artist'),
+                                Text(
+                                  currentSong.artist ?? 'unknown artist',
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ],
                             ),
                             const Icon(Icons.music_note_sharp)
@@ -138,14 +141,18 @@ class SongPage extends StatelessWidget {
                               value.toggleRandomSong();
                             },
                           ),
-                          IconButton(
-                            icon: Icon(
-                              value.isRepeat ? Icons.repeat_one : Icons.repeat,
-                            ),
-                            onPressed: () {
-                              value.toggleRepeat();
-                            },
-                          ),
+                          ValueListenableBuilder<bool>(
+                              valueListenable: value.isRepeat,
+                              builder: (context, isrepeat, child) {
+                                return IconButton(
+                                  icon: Icon(
+                                    isrepeat ? Icons.repeat_one : Icons.repeat,
+                                  ),
+                                  onPressed: () {
+                                    value.toggleRepeat();
+                                  },
+                                );
+                              }),
                           Text(formatTime(value.totalDuration)),
                         ],
                       ),
@@ -201,8 +208,14 @@ class SongPage extends StatelessWidget {
                       child: GestureDetector(
                         onTap: value.pausePlay,
                         child: NeuBox(
-                          child: Icon(
-                              value.isPlaying ? Icons.pause : Icons.play_arrow),
+                          child: ValueListenableBuilder<bool>(
+                              valueListenable: value.isPlaying,
+                              builder: (context, isplaying, child) {
+                                return Icon(
+                                  isplaying ? Icons.pause : Icons.play_arrow,
+                                  size: 30,
+                                );
+                              }),
                         ),
                       ),
                     ),

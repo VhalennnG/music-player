@@ -80,11 +80,13 @@ class _HomePageState extends State<HomePage> {
                   leading: QueryArtworkWidget(
                       id: song.id,
                       type: ArtworkType.AUDIO,
-                      nullArtworkWidget: Container(
-                        width: 55,
-                        height: 55,
-                        color: Theme.of(context).colorScheme.primary,
-                        child: Icon(Icons.music_note_sharp),
+                      nullArtworkWidget: ClipOval(
+                        child: Container(
+                          width: 55,
+                          height: 55,
+                          color: Theme.of(context).colorScheme.primary,
+                          child: Icon(Icons.music_note_sharp),
+                        ),
                       ),
                       artworkHeight: 55,
                       artworkWidth: 55,
