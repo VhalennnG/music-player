@@ -126,7 +126,12 @@ class SongPage extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(formatTime(value.currentDuration)),
+                          ValueListenableBuilder<Duration>(
+                            valueListenable: value.currentDurationNotifier,
+                            builder: (context, currentDuration, child) {
+                              return Text(formatTime(currentDuration));
+                            },
+                          ),
                           IconButton(
                             icon: const Icon(Icons.shuffle),
                             onPressed: () {
@@ -150,21 +155,26 @@ class SongPage extends StatelessWidget {
                     SliderTheme(
                       data: SliderTheme.of(context).copyWith(
                         thumbShape:
-                            const RoundSliderThumbShape(enabledThumbRadius: 0),
+                            const RoundSliderThumbShape(enabledThumbRadius: 6),
                       ),
-                      child: Slider(
-                        min: 0,
-                        max: value.totalDuration.inSeconds.toDouble(),
-                        value: (value.currentDuration.inSeconds >
-                                value.totalDuration.inSeconds)
-                            ? value.totalDuration.inSeconds.toDouble()
-                            : value.currentDuration.inSeconds.toDouble(),
-                        activeColor: Colors.green,
-                        onChanged: (double newValue) {
-                          // during when the user is sliding around
-                        },
-                        onChangeEnd: (double newValue) {
-                          value.seek(Duration(seconds: newValue.toInt()));
+                      child: ValueListenableBuilder<Duration>(
+                        valueListenable: value.currentDurationNotifier,
+                        builder: (context, currentDuration, child) {
+                          return Slider(
+                            min: 0,
+                            max: value.totalDuration.inSeconds.toDouble(),
+                            value: (currentDuration.inSeconds >
+                                    value.totalDuration.inSeconds)
+                                ? value.totalDuration.inSeconds.toDouble()
+                                : currentDuration.inSeconds.toDouble(),
+                            activeColor: Colors.green,
+                            onChanged: (double newValue) {
+                              // Do nothing when dragging
+                            },
+                            onChangeEnd: (double newValue) {
+                              value.seek(Duration(seconds: newValue.toInt()));
+                            },
+                          );
                         },
                       ),
                     ),

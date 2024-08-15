@@ -39,6 +39,8 @@ class PlaylistProvider extends ChangeNotifier {
   // A U D I O P L A Y E R
 
   // duration
+  ValueNotifier<Duration> currentDurationNotifier =
+      ValueNotifier(Duration.zero);
   Duration _currentDuration = Duration.zero;
   Duration _totalDuration = Duration.zero;
 
@@ -108,6 +110,7 @@ class PlaylistProvider extends ChangeNotifier {
   // toggle repeat
   void toggleRepeat() {
     _isRepeat = !_isRepeat;
+    notifyListeners();
   }
 
   // toggle random song
@@ -129,10 +132,10 @@ class PlaylistProvider extends ChangeNotifier {
 
     // listen current duration
     _audioPlayer.onPositionChanged.listen((newPosition) {
-      _currentDuration = newPosition;
+      currentDurationNotifier.value = newPosition;
       // Check if the current duration is 1 second away from the total duration
       if (_isRepeat &&
-          (_totalDuration.inSeconds - _currentDuration.inSeconds <= 1)) {
+          (_totalDuration.inSeconds - newPosition.inSeconds <= 1)) {
         seek(Duration.zero);
         play();
         notifyListeners();
@@ -155,7 +158,6 @@ class PlaylistProvider extends ChangeNotifier {
   int? get currentSongIndex => _currentSongIndex;
   bool get isPlaying => _isPlaying;
   bool get isRepeat => _isRepeat;
-  Duration get currentDuration => _currentDuration;
   Duration get totalDuration => _totalDuration;
 
   // SETTER

@@ -96,19 +96,24 @@ class NowPlayingBar extends StatelessWidget {
                         overlayShape:
                             const RoundSliderOverlayShape(overlayRadius: 14),
                       ),
-                      child: Slider(
-                        min: 0,
-                        max: value.totalDuration.inSeconds.toDouble(),
-                        value: (value.currentDuration.inSeconds >
-                                value.totalDuration.inSeconds)
-                            ? value.totalDuration.inSeconds.toDouble()
-                            : value.currentDuration.inSeconds.toDouble(),
-                        activeColor: Colors.green,
-                        onChanged: (double newValue) {
-                          // Do nothing when dragging
-                        },
-                        onChangeEnd: (double newValue) {
-                          value.seek(Duration(seconds: newValue.toInt()));
+                      child: ValueListenableBuilder<Duration>(
+                        valueListenable: value.currentDurationNotifier,
+                        builder: (context, currentDuration, child) {
+                          return Slider(
+                            min: 0,
+                            max: value.totalDuration.inSeconds.toDouble(),
+                            value: (currentDuration.inSeconds >
+                                    value.totalDuration.inSeconds)
+                                ? value.totalDuration.inSeconds.toDouble()
+                                : currentDuration.inSeconds.toDouble(),
+                            activeColor: Colors.green,
+                            onChanged: (double newValue) {
+                              // Do nothing when dragging
+                            },
+                            onChangeEnd: (double newValue) {
+                              value.seek(Duration(seconds: newValue.toInt()));
+                            },
+                          );
                         },
                       ),
                     ),
